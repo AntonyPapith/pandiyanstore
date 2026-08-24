@@ -148,7 +148,7 @@ a{ text-decoration:none; color:inherit; }
   overflow:hidden;
   border: 3px solid rgba(255,255,255,0.14);
   box-shadow: 0 18px 30px rgba(20,4,4,0.28);
-  transition: transform .55s cubic-bezier(.22,.9,.3,1), opacity .5s ease, box-shadow .4s ease, border-color .4s ease;
+  transition: transform .16s cubic-bezier(.22,.9,.3,1), opacity .16s ease, box-shadow .16s ease, border-color .16s ease;
   transform-style:preserve-3d;
   cursor:pointer;
   will-change: transform;
@@ -162,7 +162,7 @@ a{ text-decoration:none; color:inherit; }
   opacity:1 !important;
   z-index:999 !important;
 }
-.fan-card.is-opening{ z-index:10000 !important; transition:transform .32s cubic-bezier(.2,.8,.2,1), border-radius .32s ease !important; transform:translate3d(0,0,500px) scale(3.5) !important; border-radius:0; }
+.fan-card.is-opening{ z-index:10000 !important; transition:transform .13s cubic-bezier(.2,.8,.2,1), border-radius .13s ease !important; transform:translate3d(0,0,500px) scale(3.5) !important; border-radius:0; }
 .fan-card.is-active::after{
   content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
   border-radius:calc(var(--radius-md) - 1px);
@@ -545,6 +545,9 @@ a{ text-decoration:none; color:inherit; }
 
 /* ---------------- responsive ---------------- */
 @media (max-width: 600px){
+  body.home-page{height:100vh;height:100dvh;overflow:hidden}
+  body.home-page .hero{height:100vh;height:100dvh;min-height:0}
+  body.home-page .hero-foot{position:relative;z-index:2;transform:translateY(-34px)}
   .hero{ padding-left:14px; padding-right:14px; padding-bottom:28px; overflow:hidden; }
   .icon-btn{ width:42px; height:42px; }
   .topbar{grid-template-columns:42px minmax(0,1fr) auto;gap:7px}.home-search{height:38px}.home-search input{padding-left:12px;font-size:11px}.home-search button{width:38px;height:38px;flex-basis:38px}.top-actions{gap:5px}.top-actions .icon-btn{width:38px;height:38px}.search-header{grid-template-columns:38px minmax(0,1fr) 42px}.results-search{height:38px}.results-search input{padding:0 10px;font-size:11px}.results-search button{padding:0 11px;font-size:10px}

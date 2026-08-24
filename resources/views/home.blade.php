@@ -12,7 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('css/seyon.css') }}">
 </head>
-<body>
+<body class="home-page">
 
 <div class="bg-glow" aria-hidden="true"></div>
 

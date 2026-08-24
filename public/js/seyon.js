@@ -277,7 +277,7 @@ function onCardClick(i){
   if (wasCentered) {
     openCarouselItem(i);
   } else {
-    setTimeout(() => openCarouselItem(i), 420);
+    setTimeout(() => openCarouselItem(i), 120);
   }
 }
 
@@ -289,7 +289,7 @@ function openCarouselItem(i){
     stopAuto();
     setTimeout(() => {
       window.location.href = `/categories/${encodeURIComponent(item.project.id)}/products`;
-    }, 320);
+    }, 130);
     return;
   }
   openReel(item.categoryIndex);

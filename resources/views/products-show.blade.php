@@ -16,7 +16,7 @@
 <body class="product-page">
 <main class="product-shell">
     <header class="product-header">
-        <a class="product-back" href="{{ route('home') }}" aria-label="Back to categories">&larr;</a>
+        <a class="product-back" href="{{ route('home') }}" aria-label="Back to categories" onclick="if (window.history.length > 1) { event.preventDefault(); window.history.back(); }">&larr;</a>
         <div><p>Shop category</p><h1>{{ $category->name }}</h1></div>
         <div class="product-header-actions"><a class="product-wishlist-link" href="{{ route('wishlist.index') }}" aria-label="Open wishlist">♡<span>{{ count(session('wishlist', [])) }}</span></a><a class="product-cart-link" href="{{ route('cart.index') }}" aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 1.9-1.4L21 7H6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1.3" fill="currentColor"/><circle cx="18" cy="20" r="1.3" fill="currentColor"/></svg><span>{{ count(array_filter(session('cart', []), fn ($quantity) => $quantity > 0)) }}</span></a></div>
     </header>
