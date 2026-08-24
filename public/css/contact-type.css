@@ -1,0 +1,17 @@
+.contact-card>a strong,
+.contact-address strong {
+    color: #08033D;
+    font-size: 13px;
+    font-weight: 800
+}
+
+.contact-card>a span,
+.contact-address span {
+    color: #08033D;
+    font-size: 15px;
+    font-weight: 600
+}
+
+.contact-address span {
+    line-height: 1.5
+}

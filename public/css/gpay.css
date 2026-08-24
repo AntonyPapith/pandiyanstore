@@ -1,0 +1,17 @@
+.payment-icon.gpay {
+    background: #fff;
+    border: 1px solid #e1e5eb;
+    color: #202124
+}
+
+.payment-icon.gpay b {
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1;
+    background: conic-gradient(from -35deg, #4285f4 0 25%, #34a853 0 43%, #fbbc05 0 68%, #ea4335 0 82%, #4285f4 0);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent
+}

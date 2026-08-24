@@ -1,0 +1,126 @@
+.account-order {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line)
+}
+
+.account-order:last-child {
+    border-bottom: 0
+}
+
+.account-order small,
+.account-order p {
+    display: block;
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 11px
+}
+
+.account-order.new-order {
+    margin: 0 -9px;
+    padding: 13px 9px;
+    border-radius: 12px;
+    background: #e9f9ee;
+    box-shadow: 0 0 0 2px #64c77f
+}
+
+.order-success-overlay {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(8, 3, 61, .62);
+    backdrop-filter: blur(5px)
+}
+
+.order-success-popup {
+    position: relative;
+    z-index: 2;
+    width: min(360px, 100%);
+    padding: 30px 22px;
+    text-align: center;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .3);
+    animation: success-pop .45s cubic-bezier(.2, .9, .3, 1.2)
+}
+
+.success-check {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 13px;
+    border-radius: 50%;
+    background: #20a653;
+    color: #fff;
+    font-size: 36px;
+    font-weight: 700
+}
+
+.order-success-popup h2 {
+    margin: 0;
+    color: #087a34;
+    font-size: 27px
+}
+
+.order-success-popup p {
+    margin: 8px 0 19px;
+    color: var(--muted);
+    font-size: 13px
+}
+
+.order-success-popup button {
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--navy);
+    color: var(--pink);
+    font: 700 13px Poppins, sans-serif;
+    cursor: pointer
+}
+
+.confetti {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none
+}
+
+.confetti i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 15px;
+    border-radius: 2px;
+    background: hsl(calc(var(--i)*47), 85%, 58%);
+    animation: confetti-blast 1.1s ease-out both;
+    transform: rotate(calc(var(--i)*23deg))
+}
+
+@keyframes success-pop {
+    from {
+        opacity: 0;
+        transform: scale(.65)
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1)
+    }
+}
+
+@keyframes confetti-blast {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0)
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(calc((var(--i) - 12)*24px), calc(-210px + var(--i)*9px)) rotate(720deg)
+    }
+}

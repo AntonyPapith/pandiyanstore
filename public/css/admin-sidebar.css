@@ -1,0 +1,47 @@
+.admin-sidebar-close {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+    font-size: 27px;
+    line-height: 1;
+    cursor: pointer
+}
+
+.admin-sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    background: rgba(8, 3, 61, .48);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s ease
+}
+
+@media(max-width:760px) {
+    .admin-sidebar-close {
+        display: grid;
+        place-items: center
+    }
+
+    .admin-sidebar-backdrop {
+        display: block
+    }
+
+    .admin-sidebar-backdrop.open {
+        opacity: 1;
+        visibility: visible
+    }
+
+    .admin-sidebar {
+        padding-top: 56px
+    }
+}
