@@ -6,4 +6,4 @@
 <label>Password<div class="password-wrap"><input id="registerPassword" type="password" name="password" autocomplete="new-password" required><button class="password-eye" type="button" data-password="registerPassword" aria-label="Show password">◉</button></div></label>
 <label>Confirm password<div class="password-wrap"><input id="confirmPassword" type="password" name="password_confirmation" autocomplete="new-password" required><button class="password-eye" type="button" data-password="confirmPassword" aria-label="Show password">◉</button></div></label>
 <button class="primary-btn" type="submit">Register</button></form><p class="auth-switch">Already registered? <a href="{{ route('login') }}">Login</a></p></div>
-<script src="{{ asset('js/password-toggle.js') }}"></script></body></html>
+<script src="{{ asset('js/password-toggle.js') }}?v={{ filemtime(public_path('js/password-toggle.js')) }}"></script></body></html>

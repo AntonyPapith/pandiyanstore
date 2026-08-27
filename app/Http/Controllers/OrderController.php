@@ -25,7 +25,7 @@ class OrderController extends Controller
         $request->session()->flash('order_success', 'Your order has been placed successfully.');
         $request->session()->flash('placed_order_id', $order->id);
 
-        return redirect()->route('customer.account')->withFragment('order-'.$order->id);
+        return redirect()->route('customer.account')->withFragment('orders');
     }
 
     public function success(Request $request, Order $order): View

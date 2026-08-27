@@ -75,6 +75,6 @@ class RazorpayController extends Controller
         $request->session()->flash('order_success', 'Payment successful! Your order has been placed.');
         $request->session()->flash('placed_order_id', $order->id);
 
-        return response()->json(['redirect' => route('customer.account').'#order-'.$order->id]);
+        return response()->json(['redirect' => route('customer.account').'#orders']);
     }
 }

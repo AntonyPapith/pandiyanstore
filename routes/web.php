@@ -19,6 +19,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/contact', ContactController::class)->name('contact');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/categories/{category}/products', [HomeController::class, 'products'])->name('categories.products');
+Route::get('/products/{product}', [HomeController::class, 'product'])->name('products.detail');
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/{product}', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/{product}', [CartController::class, 'update'])->name('cart.update');

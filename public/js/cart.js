@@ -75,3 +75,25 @@ document.querySelectorAll(".quantity-form input").forEach(input => {
     }
   });
 });
+
+document.querySelectorAll(".qty-minus, .qty-plus").forEach(button => {
+  button.addEventListener("click", () => {
+    const input = button.closest(".quantity-form").querySelector('input[name="quantity"]');
+    const current = Number(input.value) || 1;
+    const next = button.classList.contains("qty-plus") ? current + 1 : current - 1;
+    const minimum = Number(input.min) || 1;
+    const maximum = Number(input.max);
+
+    if (next < minimum) {
+      showMessage("Quantity must be at least 1.");
+      return;
+    }
+    if (next > maximum) {
+      showMessage(`Only ${maximum} item${maximum === 1 ? " is" : "s are"} available in stock.`);
+      return;
+    }
+
+    input.value = next;
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+});

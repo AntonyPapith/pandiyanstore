@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ asset('css/seyon.css') }}">
+<link rel="stylesheet" href="{{ asset('css/seyon.css') }}?v={{ filemtime(public_path('css/seyon.css')) }}">
 </head>
 <body class="home-page">
 
@@ -60,13 +60,13 @@
   <nav class="sidebar-list" id="sidebarList"></nav>
   @auth
     @if(auth()->user()->is_admin)
-      <a class="sidebar-add" href="{{ route('admin.dashboard') }}">Open admin panel</a>
-      <a class="sidebar-add sidebar-action-link" href="{{ route('admin.categories.create') }}">+ Add category</a>
-      <a class="sidebar-add sidebar-video-add" href="{{ route('admin.products.create') }}">+ Add product</a>
+      <a class="sidebar-add" href="{{ route('admin.dashboard') }}" hidden>Open admin panel</a>
+      <a class="sidebar-add sidebar-action-link" href="{{ route('admin.categories.create') }}" hidden>+ Add category</a>
+      <a class="sidebar-add sidebar-video-add" href="{{ route('admin.products.create') }}" hidden>+ Add product</a>
     @else
-      <div class="sidebar-user"><strong>{{ auth()->user()->name }}</strong><span>{{ auth()->user()->email }}</span><span>{{ auth()->user()->phone }}</span></div>
-      <a class="sidebar-add" href="{{ route('customer.account') }}">My account</a>
-      <a class="sidebar-add sidebar-action-link" href="{{ route('cart.index') }}">View cart</a>
+      <div class="sidebar-user" hidden><strong>{{ auth()->user()->name }}</strong><span>{{ auth()->user()->email }}</span><span>{{ auth()->user()->phone }}</span></div>
+      <a class="sidebar-add" href="{{ route('customer.account') }}" hidden>My account</a>
+      <a class="sidebar-add sidebar-action-link" href="{{ route('cart.index') }}" hidden>View cart</a>
     @endif
   @endauth
   <a class="sidebar-add sidebar-action-link" href="{{ route('contact') }}">Contact us</a>
@@ -111,6 +111,6 @@ window.PANDIAN_CATEGORIES = {{ Illuminate\Support\Js::from($categories->map(fn (
   'image' => Storage::url($category->image_path),
 ])) }};
 </script>
-<script src="{{ asset('js/seyon.js') }}"></script>
+<script src="{{ asset('js/seyon.js') }}?v={{ filemtime(public_path('js/seyon.js')) }}"></script>
 </body>
 </html>

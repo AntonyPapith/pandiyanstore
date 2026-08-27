@@ -272,6 +272,13 @@ nextBtn?.addEventListener("click", () => { step(1); pauseThenResume(); });
 function onCardClick(i){
   manualColorMode = false;
   pauseThenResume();
+  if (window.innerWidth > 600) {
+    const selectedItem = carouselItems[i];
+    if (selectedItem?.type === "project") {
+      window.location.assign(`/categories/${encodeURIComponent(selectedItem.project.id)}/products`);
+    }
+    return;
+  }
   const wasCentered = offsetFor(i, current) === 0;
   goTo(i);
   if (wasCentered) {

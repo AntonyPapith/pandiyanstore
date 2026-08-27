@@ -44,11 +44,11 @@
                 <p>{{ auth()->user()->customerDetail->address }}, {{ auth()->user()->customerDetail->area }}, {{ auth()->user()->customerDetail->city }}@if(auth()->user()->customerDetail->nearby_landmark)<small>Landmark: {{ auth()->user()->customerDetail->nearby_landmark }}</small>@endif</p>
             </div>@else<p class="no-address">No delivery address saved yet.</p>@endif
         </section>
-        <section class="account-card">
+        <section class="account-card" id="orders">
             <div class="section-title"><span>My orders</span></div>
             @forelse(auth()->user()->orders()->with('items')->latest()->get() as $order)
             <article id="order-{{ $order->id }}" class="account-order {{ (int) session('placed_order_id') === $order->id ? 'new-order' : '' }}">
-                <div><strong>{{ $order->order_number }}</strong><small>{{ $order->created_at->format('d M Y') }} · {{ strtoupper($order->payment_method) }} · {{ ucfirst($order->order_status) }}</small></div><strong>₹{{ number_format((float)$order->total_amount,2) }}</strong>@foreach($order->items as $item)<p>{{ $item->product_name }} × {{ $item->quantity }}</p>@endforeach
+                <div><strong>{{ $order->order_number }}</strong><small>{{ $order->created_at->timezone('Asia/Kolkata')->format('d M Y') }} · {{ strtoupper($order->payment_method) }} · {{ ucfirst($order->order_status) }}</small></div><strong>₹{{ number_format((float)$order->total_amount,2) }}</strong>@foreach($order->items as $item)<p>{{ $item->product_name }} × {{ $item->quantity }}</p>@endforeach
             </article>
             @empty<p class="no-address">You have not placed any orders yet.</p>@endforelse
         </section>

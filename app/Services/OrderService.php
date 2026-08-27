@@ -2,11 +2,15 @@
 
 namespace App\Services;
 
+use App\Mail\AdminOrderPlaced;
+use App\Mail\CustomerOrderPlaced;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class OrderService
 {
@@ -20,7 +24,7 @@ class OrderService
             throw ValidationException::withMessages(['address' => 'Please add a delivery address.']);
         }
 
-        return DB::transaction(function () use ($user, $cart, $paymentMethod, $payment, $detail): Order {
+        $order = DB::transaction(function () use ($user, $cart, $paymentMethod, $payment, $detail): Order {
             $products = Product::whereIn('id', array_keys($cart))->lockForUpdate()->get();
             if ($products->count() !== count($cart)) {
                 throw ValidationException::withMessages(['cart' => 'One or more products are unavailable.']);
@@ -58,6 +62,33 @@ class OrderService
 
             return $order;
         });
+
+        $this->sendOrderEmails($order->load('items'));
+
+        return $order;
+    }
+
+    private function sendOrderEmails(Order $order): void
+    {
+        if (filter_var($order->customer_email, FILTER_VALIDATE_EMAIL)) {
+            try {
+                Mail::to($order->customer_email)->send(new CustomerOrderPlaced($order));
+            } catch (Throwable $exception) {
+                report($exception);
+            }
+        }
+
+        $adminEmails = User::where('is_admin', true)->whereNotNull('email')->pluck('email')
+            ->filter(fn (string $email): bool => filter_var($email, FILTER_VALIDATE_EMAIL) !== false)
+            ->unique()->values()->all();
+
+        if ($adminEmails !== []) {
+            try {
+                Mail::to($adminEmails)->send(new AdminOrderPlaced($order));
+            } catch (Throwable $exception) {
+                report($exception);
+            }
+        }
     }
 
     public function total(array $cart): float

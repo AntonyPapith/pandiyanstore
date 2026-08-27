@@ -6,4 +6,4 @@
 <label>Password<div class="password-wrap"><input id="loginPassword" type="password" name="password" autocomplete="current-password" required><button class="password-eye" type="button" data-password="loginPassword" aria-label="Show password">◉</button></div></label>
 <label class="remember"><input type="checkbox" name="remember" value="1"> Remember me</label><button class="primary-btn" type="submit">Login</button></form>
 <p class="auth-switch">New customer? <a href="{{ route('customer.register') }}">Create account</a></p><a class="back-home" href="{{ route('home') }}">&larr; Back to store</a></div>
-<script src="{{ asset('js/password-toggle.js') }}"></script></body></html>
+<script src="{{ asset('js/password-toggle.js') }}?v={{ filemtime(public_path('js/password-toggle.js')) }}"></script></body></html>

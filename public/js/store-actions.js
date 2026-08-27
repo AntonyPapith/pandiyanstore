@@ -11,6 +11,15 @@
     }
   }
 
+  function updateWishlistHeader(active) {
+    var links = document.querySelectorAll(".product-wishlist-link, .cart-wishlist-icon");
+    for (var i = 0; i < links.length; i += 1) {
+      links[i].classList.toggle("is-active", active);
+      var firstNode = links[i].firstChild;
+      if (firstNode && firstNode.nodeType === 3) firstNode.nodeValue = active ? "♥" : "♡";
+    }
+  }
+
   function sendForm(form, extraData, done, failed) {
     var data = new FormData(form);
     var key;
@@ -52,14 +61,27 @@
     var originalText = button.textContent;
     var wasActive = button.classList.contains("active");
     var desiredActive = !wasActive;
+    var wishlistBadge = document.querySelector(".product-wishlist-link span");
+    var previousWishlistCount = wishlistBadge ? Number(wishlistBadge.textContent) || 0 : 0;
     var requestId = String(Number(form.getAttribute("data-request-id") || 0) + 1);
     form.setAttribute("data-request-id", requestId);
 
-    if (isWishlist) button.classList.toggle("active", desiredActive);
+    if (isWishlist) {
+      button.classList.toggle("active", desiredActive);
+      var optimisticWishlistCount = Math.max(0, previousWishlistCount + (desiredActive ? 1 : -1));
+      updateNotification(".product-wishlist-link span", optimisticWishlistCount);
+      updateWishlistHeader(optimisticWishlistCount > 0);
+    }
     if (isCart) {
       form.setAttribute("data-busy", "true");
       button.disabled = true;
-      button.textContent = "Adding...";
+      button.textContent = "Added";
+      var cartBadges = document.querySelectorAll(".product-cart-link span, .cart-icon span");
+      for (var badgeIndex = 0; badgeIndex < cartBadges.length; badgeIndex += 1) {
+        cartBadges[badgeIndex].classList.remove("notification-bump");
+        void cartBadges[badgeIndex].offsetWidth;
+        cartBadges[badgeIndex].classList.add("notification-bump");
+      }
     }
 
     sendForm(form, isWishlist ? { wishlisted: desiredActive ? "1" : "0" } : {}, function (result) {
@@ -73,12 +95,12 @@
           }
         }
         updateNotification(".product-wishlist-link span", result.wishlist_count);
+        updateWishlistHeader(Number(result.wishlist_count) > 0);
         var heading = document.querySelector("h1");
         var card = form.closest ? form.closest(".product-card") : null;
         if (!result.active && heading && heading.textContent.replace(/^\s+|\s+$/g, "") === "My Wishlist" && card) card.parentNode.removeChild(card);
       } else {
         updateNotification(".product-cart-link span, .cart-icon span", result.cart_count);
-        button.textContent = "Added";
         window.setTimeout(function () {
           button.textContent = originalText;
           button.disabled = false;
@@ -86,7 +108,11 @@
         }, 700);
       }
     }, function (message) {
-      if (isWishlist && form.getAttribute("data-request-id") === requestId) button.classList.toggle("active", wasActive);
+      if (isWishlist && form.getAttribute("data-request-id") === requestId) {
+        button.classList.toggle("active", wasActive);
+        updateNotification(".product-wishlist-link span", previousWishlistCount);
+        updateWishlistHeader(previousWishlistCount > 0);
+      }
       if (isCart) {
         button.textContent = originalText;
         button.disabled = false;

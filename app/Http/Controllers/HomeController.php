@@ -18,8 +18,28 @@ class HomeController extends Controller
     public function products(Request $request, Category $category): View
     {
         $request->session()->put('continue_shopping_url', route('categories.products', $category));
+        $products = $category->products()->orderBy('id')->get()
+            ->groupBy(fn (Product $product) => mb_strtolower($product->name))
+            ->map(function ($variants): Product {
+           $product = $variants->firstWhere('quantity', '>', 0) ?? $variants->first();
+                $product->variant_stock = $variants->sum('quantity');
 
-        return view('products-show', ['category' => $category->load('products')]);
+                return $product;
+            })->values();
+
+        return view('products-show', compact('category', 'products'));
+    }
+
+    public function product(Product $product): View
+    {
+        $variants = Product::where('category_id', $product->category_id)
+            ->where('name', $product->name)
+            ->orderBy('id')->get();
+
+        return view('product-detail', [
+            'product' => $product->load('category'),
+            'variants' => $variants,
+        ]);
     }
 
     public function search(Request $request): View|RedirectResponse
