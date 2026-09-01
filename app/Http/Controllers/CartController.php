@@ -6,7 +6,6 @@ use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 
 class CartController extends Controller
@@ -112,46 +111,22 @@ class CartController extends Controller
             return redirect()->route('cart.index')->withErrors(['cart' => 'Your cart is empty.']);
         }
 
-        $razorpayCheckout = null;
-        $amount = (int) round($cartData['total'] * 100);
-
-        if ($amount >= 100 && config('services.razorpay.key_id') && config('services.razorpay.key_secret')) {
-            try {
-                $response = Http::withBasicAuth(config('services.razorpay.key_id'), config('services.razorpay.key_secret'))
-                    ->acceptJson()->timeout(15)->post('https://api.razorpay.com/v1/orders', [
-                        'amount' => $amount,
-                        'currency' => 'INR',
-                        'receipt' => 'cart_'.now()->format('YmdHis'),
-                        'notes' => ['customer_id' => (string) $request->user()->id],
-                    ]);
-
-                if ($response->successful()) {
-                    $razorpayOrderId = $response->json('id');
-                    $contact = preg_replace('/\D+/', '', (string) $request->user()->phone);
-                    $contact = strlen($contact) === 10 ? '+91'.$contact : '+'.ltrim($contact, '+');
-                    $request->session()->put('razorpay_checkout', ['order_id' => $razorpayOrderId, 'amount' => $amount]);
-                    $razorpayCheckout = [
-                        'key' => config('services.razorpay.key_id'),
-                        'order_id' => $razorpayOrderId,
-                        'amount' => $amount,
-                        'currency' => 'INR',
-                        'name' => 'Pandiyan Store',
-                        'customer' => [
-                            'name' => $request->user()->name,
-                            'email' => $request->user()->email,
-                            'contact' => $contact,
-                        ],
-                    ];
-                }
-            } catch (\Throwable $exception) {
-                report($exception);
-            }
-        }
+        $upiId = (string) config('services.upi.id');
+        $upiReference = 'PS'.now()->format('YmdHis').$request->user()->id;
+        $upiUrl = $upiId === '' ? null : 'upi://pay?'.http_build_query([
+            'pa' => $upiId,
+            'pn' => config('services.upi.payee_name', 'Pandiyan Store'),
+            'am' => number_format((float) $cartData['total'], 2, '.', ''),
+            'cu' => 'INR',
+            'tr' => $upiReference,
+            'tn' => 'Pandiyan Store order '.$upiReference,
+        ], '', '&', PHP_QUERY_RFC3986);
 
         return view('cart.payment', [
             ...$cartData,
             'detail' => $request->user()->customerDetail,
-            'razorpayCheckout' => $razorpayCheckout,
+            'upiUrl' => $upiUrl,
+            'upiReference' => $upiReference,
         ]);
     }
 

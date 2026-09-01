@@ -7,6 +7,23 @@ return [
         'key_secret' => env('RAZORPAY_KEY_SECRET'),
     ],
 
+    'upi' => [
+        'id' => env('UPI_ID'),
+        'payee_name' => env('UPI_PAYEE_NAME', 'Pandiyan Store'),
+    ],
+
+    'whatsapp' => [
+        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'business_account_id' => env('WHATSAPP_BUSINESS_ACCOUNT_ID'),
+        'verify_token' => env('WHATSAPP_VERIFY_TOKEN'),
+        'api_version' => env('WHATSAPP_API_VERSION', 'v25.0'),
+        'admin_phone' => env('WHATSAPP_ADMIN_PHONE'),
+        'customer_template' => env('WHATSAPP_CUSTOMER_TEMPLATE', 'order_confirmation'),
+        'admin_template' => env('WHATSAPP_ADMIN_TEMPLATE', 'new_order_admin'),
+        'template_language' => env('WHATSAPP_TEMPLATE_LANGUAGE', 'en_US'),
+    ],
+
     'contact' => [
         'whatsapp' => env('CONTACT_WHATSAPP_URL'),
         'instagram' => env('CONTACT_INSTAGRAM_URL'),

@@ -26,9 +26,9 @@
     </section>
 
     @if($errors->any())<p class="checkout-error">{{ $errors->first() }}</p>@endif
-    @if(!$razorpayCheckout)<p class="checkout-error">Online payment is temporarily unavailable. Cash on delivery is still available.</p>@endif
+    @if(!$upiUrl)<p class="checkout-error">Online payment is temporarily unavailable. Cash on delivery is still available.</p>@endif
 
-    <form class="payment-form" id="paymentForm" method="POST" action="{{ route('orders.store') }}">@csrf
+    <form class="payment-form" id="paymentForm" method="POST" action="{{ route('orders.store') }}">@csrf<input type="hidden" name="upi_reference" value="{{ $upiReference }}">
         <fieldset><legend>Payment method</legend>
             <label class="payment-option"><input type="radio" name="payment_method" value="cod" checked><span class="payment-radio"></span><span class="payment-icon">₹</span><span class="payment-copy"><strong>Cash on delivery</strong><small>Pay when your order arrives</small></span></label>
             <label class="payment-option"><input type="radio" name="payment_method" value="upi"><span class="payment-radio"></span><span class="payment-icon gpay"><b>G</b></span><span class="payment-copy"><strong>Google Pay</strong><small>Pay securely using the GPay app</small></span></label>
@@ -38,8 +38,7 @@
     </form>
     <a class="checkout-back" href="{{ route('checkout', ['edit' => 1]) }}">&larr; Edit delivery address</a>
 </main>
-<script>window.PANDIAN_RAZORPAY = {{ Illuminate\Support\Js::from(['checkout' => $razorpayCheckout, 'verifyUrl' => route('razorpay.verify', [], false), 'logo' => asset('logo.png')]) }};</script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>window.PANDIAN_UPI = {{ Illuminate\Support\Js::from(['url' => $upiUrl]) }};</script>
 <script src="{{ asset('js/payment.js') }}?v={{ filemtime(public_path('js/payment.js')) }}"></script>
 </body>
 </html>

@@ -14,6 +14,8 @@ use Throwable;
 
 class OrderService
 {
+    public function __construct(private WhatsAppService $whatsapp) {}
+
     public function place(User $user, array $cart, string $paymentMethod, array $payment = []): Order
     {
         if ($cart === []) {
@@ -41,10 +43,11 @@ class OrderService
                 'user_id' => $user->id,
                 'order_number' => 'PS'.now()->format('YmdHis').str_pad((string) random_int(0, 999), 3, '0', STR_PAD_LEFT),
                 'payment_method' => $paymentMethod,
-                'payment_status' => $paymentMethod === 'cod' ? 'cash_on_delivery' : 'paid',
+                'payment_status' => $paymentMethod === 'cod' ? 'cash_on_delivery' : 'pending_verification',
+                'upi_reference' => $payment['upi_reference'] ?? null,
                 'razorpay_order_id' => $payment['razorpay_order_id'] ?? null,
                 'razorpay_payment_id' => $payment['razorpay_payment_id'] ?? null,
-                'order_status' => 'placed',
+                'order_status' => $paymentMethod === 'cod' ? 'placed' : 'payment_pending',
                 'total_amount' => $total,
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,
@@ -63,7 +66,9 @@ class OrderService
             return $order;
         });
 
-        $this->sendOrderEmails($order->load('items'));
+        $order->load('items');
+        $this->sendOrderEmails($order);
+        $this->whatsapp->sendOrderNotifications($order);
 
         return $order;
     }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
-    protected $fillable = ['user_id', 'order_number', 'payment_method', 'payment_status', 'razorpay_order_id', 'razorpay_payment_id', 'order_status', 'total_amount', 'customer_name', 'customer_email', 'customer_phone', 'city', 'area', 'nearby_landmark', 'address'];
+    protected $fillable = ['user_id', 'order_number', 'payment_method', 'payment_status', 'upi_reference', 'razorpay_order_id', 'razorpay_payment_id', 'order_status', 'total_amount', 'customer_name', 'customer_email', 'customer_phone', 'city', 'area', 'nearby_landmark', 'address'];
 
     protected function casts(): array
     {
