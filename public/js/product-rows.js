@@ -15,7 +15,10 @@
     var fragment = template.content.cloneNode(true);
     var entry = fragment.querySelector(".product-entry");
     var fields = entry.querySelectorAll("[data-name]");
-    for (var i = 0; i < fields.length; i += 1) fields[i].name = "products[" + nextIndex + "][" + fields[i].getAttribute("data-name") + "]";
+    for (var i = 0; i < fields.length; i += 1) {
+      var fieldName = fields[i].getAttribute("data-name");
+      fields[i].name = "products[" + nextIndex + "][" + fieldName + "]" + (fields[i].multiple ? "[]" : "");
+    }
     nextIndex += 1;
     entry.querySelector(".remove-product-row").addEventListener("click", function () { entry.parentNode.removeChild(entry); renumberRows(); });
     rows.appendChild(fragment);

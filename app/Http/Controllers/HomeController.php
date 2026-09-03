@@ -18,7 +18,7 @@ class HomeController extends Controller
     public function products(Request $request, Category $category): View
     {
         $request->session()->put('continue_shopping_url', route('categories.products', $category));
-        $products = $category->products()->orderBy('id')->get()
+        $products = $category->products()->with('images')->orderBy('id')->get()
             ->groupBy(fn (Product $product) => mb_strtolower($product->name))
             ->map(function ($variants): Product {
            $product = $variants->firstWhere('quantity', '>', 0) ?? $variants->first();
@@ -32,7 +32,7 @@ class HomeController extends Controller
 
     public function product(Product $product): View
     {
-        $variants = Product::where('category_id', $product->category_id)
+        $variants = Product::with('images')->where('category_id', $product->category_id)
             ->where('name', $product->name)
             ->orderBy('id')->get();
 

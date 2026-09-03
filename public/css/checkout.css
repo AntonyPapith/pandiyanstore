@@ -245,6 +245,7 @@ a {
 .payment-option:hover {
     border-color: #aaa3ba
 }
+.payment-option.is-disabled{opacity:.55;cursor:not-allowed;pointer-events:none;user-select:none}.payment-option.is-disabled:hover{border-color:#ddd5df;transform:none;box-shadow:none}
 
 .payment-option input {
     position: absolute;

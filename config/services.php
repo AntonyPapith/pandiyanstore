@@ -12,6 +12,10 @@ return [
         'payee_name' => env('UPI_PAYEE_NAME', 'Pandiyan Store'),
     ],
 
+    'payment' => [
+        'cod_available' => env('COD_AVAILABLE', false),
+    ],
+
     'whatsapp' => [
         'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),

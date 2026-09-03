@@ -175,6 +175,12 @@ select {
     gap: 22px;
     margin-bottom: 26px
 }
+.dashboard-stat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.stat-card .stat-money{font-size:clamp(24px,2.5vw,38px)}.dashboard-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}.dashboard-order{justify-content:space-between}.dashboard-order>div{min-width:0}.dashboard-order>strong{white-space:nowrap;color:var(--red)}.dashboard-health{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid #eee5df}.dashboard-health span{padding:8px 10px;border-radius:8px;background:#fff3f3;color:#713535;font-size:12px}.admin-filter{display:grid;grid-template-columns:minmax(220px,1fr) minmax(180px,280px) auto auto;align-items:end;gap:12px;margin-bottom:16px;padding:16px;background:#fff}.admin-filter label{display:grid;gap:6px;font-size:12px;font-weight:700}.admin-filter input,.admin-filter select{width:100%;min-height:42px;padding:9px 12px;border:1px solid #dfd2cc;border-radius:8px;background:#fff;font:inherit}.filter-reset{display:grid;place-items:center;min-height:42px;color:var(--red);font-weight:700}.status-pill{display:inline-block;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:700;white-space:nowrap}.status-pill.yes{background:#e7f7ec;color:#20713a}.status-pill.no{background:#fff0f0;color:#a5223a}.admin-check{display:flex;align-items:center;gap:8px;min-height:40px}.admin-check input[type=checkbox]{width:18px;height:18px;margin:0;accent-color:var(--red)}
+
+.admin-filter{grid-template-columns:minmax(220px,1fr) minmax(180px,280px) auto}
+@media(max-width:800px){.dashboard-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-panels{grid-template-columns:1fr}.admin-filter{grid-template-columns:1fr 1fr}.admin-filter .primary-btn,.filter-reset{width:100%}}
+
+@media(max-width:520px){.dashboard-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-filter{grid-template-columns:1fr}.dashboard-stat-grid .stat-card{min-width:0;padding:13px 12px}.dashboard-stat-grid .stat-card span{font-size:10px;line-height:1.3}.dashboard-stat-grid .stat-card strong,.dashboard-stat-grid .stat-card .stat-money{max-width:100%;font-size:24px;overflow-wrap:anywhere}.dashboard-order{align-items:flex-start}.dashboard-order>strong{font-size:12px}}
 
 .stat-card,
 .panel {
@@ -574,6 +580,32 @@ td.actions>form{margin-left:5px}
     .category-table-panel td.actions>form{margin-left:0}
 }
 
+/* Laravel paginator (the admin panel does not load Tailwind utilities). */
+.admin-content nav[role="navigation"]{display:block;width:100%;margin-top:18px}
+.admin-content nav[role="navigation"]>div:first-child{display:none}
+.admin-content nav[role="navigation"]>div:last-child{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+.admin-content nav[role="navigation"]>div:last-child>div:first-child{color:var(--muted);font-size:12px;line-height:1.4}
+.admin-content nav[role="navigation"]>div:last-child>div:last-child{display:flex;align-items:center;justify-content:center;gap:6px}
+.admin-content nav[role="navigation"]>div:last-child>div:last-child>span{display:flex;align-items:center;justify-content:center;gap:6px}
+.admin-content nav[role="navigation"]>div:last-child>div:last-child>span>a,
+.admin-content nav[role="navigation"]>div:last-child>div:last-child>span>span>span{width:44px;height:44px;min-width:44px;margin:0;padding:0}
+.admin-content nav[role="navigation"] span[aria-current="page"] span,
+.admin-content nav[role="navigation"] a,
+.admin-content nav[role="navigation"] span[aria-disabled="true"] span{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 11px;border:1px solid #e4d6d1;background:#fff;color:var(--ink);font-size:12px;line-height:1}
+.admin-content nav[role="navigation"] a:hover{border-color:var(--red);background:#fff3f3;color:var(--red)}
+.admin-content nav[role="navigation"] span[aria-current="page"] span{border-color:var(--red);background:var(--red);color:#fff}
+.admin-content nav[role="navigation"] span[aria-disabled="true"] span{color:#b9aaaa;cursor:not-allowed}
+.admin-content nav[role="navigation"] svg{display:block;width:16px!important;height:16px!important;max-width:16px!important;max-height:16px!important}
+
+@media(max-width:640px){
+    .admin-content nav[role="navigation"]>div:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .admin-content nav[role="navigation"]>div:last-child{display:none}
+    .admin-content nav[role="navigation"]>div:first-child>a,
+    .admin-content nav[role="navigation"]>div:first-child>span{display:flex;align-items:center;justify-content:center;flex:1;width:50%;height:42px;margin:0;padding:0;border-radius:6px}
+    .admin-content nav[role="navigation"]>div:first-child>span{border:0;background:transparent}
+    .admin-content nav[role="navigation"]>div:first-child>span>span{display:flex;align-items:center;justify-content:center;width:100%;height:42px;margin:0;padding:0;border-radius:6px}
+}
+
 /* Compact Add Product field layout. */
 .product-rows-form input,.product-rows-form select,.product-rows-form textarea{padding:9px}
 .product-fixed-fields{grid-template-columns:repeat(2,minmax(220px,320px));justify-content:start}
@@ -606,6 +638,7 @@ body.product-create-admin .product-rows-form{width:100%;max-width:none}
 .product-description-field{grid-column:1/-1}
 .form-actions>a{display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border:1px solid #190505;border-radius:999px;background:#190505;color:#fff;font-weight:600}
 .form-actions>a:hover{background:#CD0000;border-color:#CD0000}
+.admin-product-images{display:flex;flex-wrap:wrap;gap:7px}.admin-product-images .table-thumb{margin:0}
 
 @media(max-width:760px){
     body.product-create-admin .admin-content{width:calc(100% - 20px)}

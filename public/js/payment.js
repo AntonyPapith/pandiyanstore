@@ -32,7 +32,8 @@ upiOption.addEventListener("change", event => {
   paymentButton.innerHTML = "Open GPay / UPI <span>&rarr;</span>";
 });
 
-paymentForm.querySelector('[value="cod"]').addEventListener("change", event => {
+const codOption = paymentForm.querySelector('[value="cod"]');
+if (codOption) codOption.addEventListener("change", event => {
   if (!event.target.checked) return;
   upiOpened = false;
   paymentButton.innerHTML = "Confirm order <span>&rarr;</span>";

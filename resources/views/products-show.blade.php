@@ -23,22 +23,22 @@
 
     <div class="product-grid">
         @forelse($products as $product)
-            <article class="product-card">
+            <article class="product-card" id="product-card-{{ $product->id }}">
                 <div class="product-card-media">
-                    <a href="{{ route('products.detail', $product) }}"><img src="{{ Storage::url($product->image_path) }}" alt="{{ $product->name }}" loading="lazy"></a>
+                    @php($cardImages = collect([$product->image_path])->merge($product->images->pluck('image_path'))->unique()->map(fn ($path) => Storage::url($path))->values())
+                    <a class="product-detail-link" href="{{ route('products.detail', $product) }}"><img src="{{ $cardImages->first() }}" data-product-images="{{ $cardImages->toJson() }}" alt="{{ $product->name }}" loading="lazy"></a>
                     <form class="wishlist-toggle" method="POST" action="{{ route('wishlist.toggle', $product) }}">@csrf<button type="submit" aria-label="Toggle {{ $product->name }} in wishlist" class="{{ isset(session('wishlist', [])[$product->id]) ? 'active' : '' }}">♥</button></form>
                     @if($product->discount_price !== null)
                         <span class="discount-badge">Sale</span>
                     @endif
                 </div>
                 <div class="product-card-body">
-                    <h2><a href="{{ route('products.detail', $product) }}">{{ $product->name }}</a></h2>
+                    <h2><a class="product-detail-link" href="{{ route('products.detail', $product) }}">{{ $product->name }}</a></h2>
                     <div class="product-card-price">
                         <strong>₹{{ number_format((float) ($product->discount_price ?? $product->price), 2) }}</strong>
                         @if($product->discount_price !== null)<del>₹{{ number_format((float) $product->price, 2) }}</del>@endif
                     </div>
                     <p class="product-card-stock {{ $product->variant_stock < 1 ? 'out' : '' }}">{{ $product->variant_stock > 0 ? $product->variant_stock.' in stock' : 'Out of stock' }}</p>
-                    @if($product->color || $product->size)<div class="product-variants">@if($product->color)<span>Color: {{ $product->color }}</span>@endif @if($product->size)<span>Size: {{ $product->size }}</span>@endif</div>@endif
                     <form class="add-cart-form product-card-cart" method="POST" action="{{ route('cart.add', $product) }}">@csrf<input type="hidden" name="quantity" value="1"><button type="submit" @disabled($product->variant_stock < 1)>{{ $product->variant_stock > 0 ? 'Add to cart' : 'Out of stock' }}</button></form>
                 </div>
             </article>

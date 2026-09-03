@@ -16,97 +16,115 @@ const ICONS = {
 };
 
 const CATEGORIES = [
-  { key:"real-estate", label:"Real Estate", icon:"home", wash:"wash-realestate",
-    tagline:"Spaces that feel like a story before you move in.",
-    reels:[
+  {
+    key: "real-estate", label: "Real Estate", icon: "home", wash: "wash-realestate",
+    tagline: "Spaces that feel like a story before you move in.",
+    reels: [
       "A golden-hour walkthrough of a modern hillside villa.",
       "Drone reveal of a lakeside residential project.",
       "Interior design tour — minimal luxury living room.",
       "Before / after: a full home renovation in 60 seconds."
-    ]},
-  { key:"hospital", label:"Hospital", icon:"cross", wash:"wash-hospital",
-    tagline:"Trust, precision and care, told visually.",
-    reels:[
+    ]
+  },
+  {
+    key: "hospital", label: "Hospital", icon: "cross", wash: "wash-hospital",
+    tagline: "Trust, precision and care, told visually.",
+    reels: [
       "Inside a state-of-the-art operation theatre.",
       "Patient care journey — from admission to recovery.",
       "Meet the specialists: a day in the ICU.",
       "New wing launch — diagnostic center walkthrough."
-    ]},
-  { key:"furniture", label:"Furniture", icon:"sofa", wash:"wash-furniture",
-    tagline:"Craft, texture and comfort in every frame.",
-    reels:[
+    ]
+  },
+  {
+    key: "furniture", label: "Furniture", icon: "sofa", wash: "wash-furniture",
+    tagline: "Craft, texture and comfort in every frame.",
+    reels: [
       "Handcrafted teak collection — studio shoot.",
       "A living room styled three different ways.",
       "Behind the scenes: upholstery craftsmanship.",
       "New season catalogue — cinematic lookbook."
-    ]},
-  { key:"jewellery", label:"Jewellery", icon:"diamond", wash:"wash-jewellery",
-    tagline:"Every stone, every setting, catching the light.",
-    reels:[
+    ]
+  },
+  {
+    key: "jewellery", label: "Jewellery", icon: "diamond", wash: "wash-jewellery",
+    tagline: "Every stone, every setting, catching the light.",
+    reels: [
       "Bridal collection — macro shots of a diamond necklace.",
       "Behind the craft: hand-setting a ruby pendant.",
       "Editorial shoot — gold jewellery on red velvet.",
       "Client story: an heirloom, reimagined.",
       "Festive collection launch — 30 second film."
-    ]},
-  { key:"food", label:"Food", icon:"burger", wash:"wash-food",
-    tagline:"Flavour you can almost taste through the screen.",
-    reels:[
+    ]
+  },
+  {
+    key: "food", label: "Food", icon: "burger", wash: "wash-food",
+    tagline: "Flavour you can almost taste through the screen.",
+    reels: [
       "Sizzling kitchen reel — the perfect cheese pull.",
       "Farm to table — a chef's tasting menu.",
       "Street food series: the city's best burger.",
       "New restaurant launch — ambience and plating."
-    ]},
-  { key:"fashion", label:"Fashion", icon:"dress", wash:"wash-fashion",
-    tagline:"Movement, mood and the story of a silhouette.",
-    reels:[
+    ]
+  },
+  {
+    key: "fashion", label: "Fashion", icon: "dress", wash: "wash-fashion",
+    tagline: "Movement, mood and the story of a silhouette.",
+    reels: [
       "Runway highlight — evening wear collection.",
       "Editorial: red gown, golden hour, city rooftop.",
       "Behind the seams — atelier fitting session.",
       "Lookbook film — spring/summer drop."
-    ]},
-  { key:"education", label:"Education", icon:"cap", wash:"wash-education",
-    tagline:"Milestones worth celebrating on screen.",
-    reels:[
+    ]
+  },
+  {
+    key: "education", label: "Education", icon: "cap", wash: "wash-education",
+    tagline: "Milestones worth celebrating on screen.",
+    reels: [
       "Campus tour — a day in the life of a student.",
       "Convocation highlights — class of 2026.",
       "Admissions film: what makes this campus different.",
       "Alumni stories — where they are now."
-    ]},
-  { key:"automobile", label:"Automobile", icon:"car", wash:"wash-automobile",
-    tagline:"Horsepower and design, cut to the beat.",
-    reels:[
+    ]
+  },
+  {
+    key: "automobile", label: "Automobile", icon: "car", wash: "wash-automobile",
+    tagline: "Horsepower and design, cut to the beat.",
+    reels: [
       "Studio reveal — new sedan, cinematic lighting.",
       "Test drive diaries — coastal highway run.",
       "Showroom launch event — full film.",
       "Detailing series: paint correction close-ups."
-    ]}
+    ]
+  }
 ];
 
 let carouselItems = [];
 let N = CATEGORIES.length;
-const fanStage   = document.getElementById("fanStage");
-const reelView   = document.getElementById("reelView");
+const fanStage = document.getElementById("fanStage");
+const reelView = document.getElementById("reelView");
 const reelScroll = document.getElementById("reelScroll");
-const reelLabel  = document.getElementById("reelCategoryLabel");
-const reelIcon   = document.getElementById("reelIcon");
-const reelCount  = document.getElementById("reelCount");
-const closeReel  = document.getElementById("closeReel");
-const prevBtn    = document.getElementById("prevBtn");
-const nextBtn    = document.getElementById("nextBtn");
+const reelLabel = document.getElementById("reelCategoryLabel");
+const reelIcon = document.getElementById("reelIcon");
+const reelCount = document.getElementById("reelCount");
+const closeReel = document.getElementById("closeReel");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
 
 let current = 3; // start with Jewellery centered, like the reference
 let autoTimer = null;
 let resumeTimer = null;
 let cards = [];
 let manualColorMode = false;
+let pressedCard = null;
+let suppressCardClick = false;
 
 /* ---------- build the fan cards once ---------- */
-function buildCards(){
+function buildCards() {
   fanStage.innerHTML = "";
   const projects = getSavedProjects();
   carouselItems = [
-    ...projects.map(project => ({ type:"project", project }))
+    ...projects.map(project => ({ type: "project", project }))
   ];
   N = carouselItems.length;
   current = 0;
@@ -141,10 +159,11 @@ function buildCards(){
       : ICONS[cat.icon];
     const el = document.createElement("div");
     el.className = `fan-card${isProject ? " is-project" : ""}`;
+    el.dataset.cardIndex = i;
     el.dataset.cardColor = isProject && /^#[0-9a-f]{6}$/i.test(item.project.color || "") ? item.project.color : "#08033D";
     el.innerHTML = `
       <div class="card-media ${mediaClass}"${mediaStyle}>
-        <span class="card-num">${String(i+1).padStart(2,"0")}</span>
+        <span class="card-num">${String(i + 1).padStart(2, "0")}</span>
         <span class="card-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7Z"/></svg></span>
         <div class="card-foot">
           <span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">${icon}</svg></span>
@@ -154,8 +173,14 @@ function buildCards(){
           <div class="card-underline"></div>
         </div>
       </div>`;
-    el.addEventListener("click", () => onCardClick(i));
-    
+    el.addEventListener("click", () => {
+      if (suppressCardClick) {
+        suppressCardClick = false;
+        return;
+      }
+      onCardClick(i);
+    });
+
     fanStage.appendChild(el);
     return el;
   });
@@ -163,18 +188,18 @@ function buildCards(){
 }
 
 /* shortest signed distance on a circular track of size N */
-function offsetFor(i, center){
+function offsetFor(i, center) {
   let d = i - center;
   d = ((d % N) + N) % N;
   if (d > N / 2) d -= N;
   return d;
 }
 
-function render(){
+function render() {
   const viewport = Math.min(window.innerWidth, 720);
   const isMobile = viewport <= 600;
-  const radius = isMobile ? Math.max(215, viewport * 0.65) : 250;
-  const angleStep = isMobile ? 34 : 28;
+  const radius = isMobile ? Math.max(215, viewport * 0.65) : Math.min(500, Math.max(390, window.innerWidth * 0.36));
+  const angleStep = isMobile ? 34 : 30;
   cards.forEach((el, i) => {
     const off = offsetFor(i, current);
     const abs = Math.abs(off);
@@ -205,18 +230,18 @@ function render(){
   document.documentElement.style.setProperty("--active-color", activeColor);
 }
 
-function goTo(i){
+function goTo(i) {
   if (!N) return;
   current = ((i % N) + N) % N;
   render();
 }
-function step(dir){ goTo(current + dir); }
+function step(dir) { goTo(current + dir); }
 
 const menuBtn = document.getElementById("menuBtn");
 const categorySidebar = document.getElementById("categorySidebar");
 const sidebarBackdrop = document.getElementById("sidebarBackdrop");
-function openCategorySidebar(){ categorySidebar?.classList.add("is-open"); sidebarBackdrop?.classList.add("is-open"); categorySidebar?.setAttribute("aria-hidden", "false"); menuBtn?.setAttribute("aria-expanded", "true"); }
-function closeCategorySidebar(){ categorySidebar?.classList.remove("is-open"); sidebarBackdrop?.classList.remove("is-open"); categorySidebar?.setAttribute("aria-hidden", "true"); menuBtn?.setAttribute("aria-expanded", "false"); }
+function openCategorySidebar() { categorySidebar?.classList.add("is-open"); sidebarBackdrop?.classList.add("is-open"); categorySidebar?.setAttribute("aria-hidden", "false"); menuBtn?.setAttribute("aria-expanded", "true"); }
+function closeCategorySidebar() { categorySidebar?.classList.remove("is-open"); sidebarBackdrop?.classList.remove("is-open"); categorySidebar?.setAttribute("aria-hidden", "true"); menuBtn?.setAttribute("aria-expanded", "false"); }
 menuBtn?.addEventListener("click", openCategorySidebar);
 document.getElementById("closeSidebar")?.addEventListener("click", closeCategorySidebar);
 sidebarBackdrop?.addEventListener("click", closeCategorySidebar);
@@ -227,7 +252,7 @@ document.addEventListener("pointerdown", event => {
 });
 
 /* ---------- autoplay ---------- */
-function startAuto(){
+function startAuto() {
   stopAuto();
   manualColorMode = false;
   render();
@@ -236,11 +261,11 @@ function startAuto(){
     step(1);
   }, 3200);
 }
-function stopAuto(){
+function stopAuto() {
   if (autoTimer) clearInterval(autoTimer);
   autoTimer = null;
 }
-function pauseThenResume(){
+function pauseThenResume() {
   stopAuto();
   clearTimeout(resumeTimer);
   resumeTimer = setTimeout(startAuto, 4500);
@@ -250,6 +275,7 @@ function pauseThenResume(){
 let dragging = false, startX = 0, dragged = 0;
 fanStage.addEventListener("pointerdown", (e) => {
   dragging = true; startX = e.clientX; dragged = 0;
+  pressedCard = e.target.closest ? e.target.closest(".fan-card") : null;
   fanStage.setPointerCapture(e.pointerId);
   pauseThenResume();
 });
@@ -257,28 +283,27 @@ fanStage.addEventListener("pointermove", (e) => {
   if (!dragging) return;
   dragged = e.clientX - startX;
 });
-fanStage.addEventListener("pointerup", () => {
+fanStage.addEventListener("pointerup", (e) => {
   if (!dragging) return;
   dragging = false;
   if (dragged < -50) { manualColorMode = true; step(1); }
   else if (dragged > 50) { manualColorMode = true; step(-1); }
+  else if (e.pointerType === "mouse" && pressedCard) {
+    suppressCardClick = true;
+    onCardClick(Number(pressedCard.dataset.cardIndex));
+    window.setTimeout(() => { suppressCardClick = false; }, 0);
+  }
+  pressedCard = null;
 });
-fanStage.addEventListener("pointercancel", () => dragging = false);
+fanStage.addEventListener("pointercancel", () => { dragging = false; pressedCard = null; });
 
 prevBtn?.addEventListener("click", () => { step(-1); pauseThenResume(); });
 nextBtn?.addEventListener("click", () => { step(1); pauseThenResume(); });
 
 /* ---------- click a card: bring to front, then open its reel ---------- */
-function onCardClick(i){
+function onCardClick(i) {
   manualColorMode = false;
   pauseThenResume();
-  if (window.innerWidth > 600) {
-    const selectedItem = carouselItems[i];
-    if (selectedItem?.type === "project") {
-      window.location.assign(`/categories/${encodeURIComponent(selectedItem.project.id)}/products`);
-    }
-    return;
-  }
   const wasCentered = offsetFor(i, current) === 0;
   goTo(i);
   if (wasCentered) {
@@ -288,7 +313,7 @@ function onCardClick(i){
   }
 }
 
-function openCarouselItem(i){
+function openCarouselItem(i) {
   const item = carouselItems[i];
   if (item.type === "project") {
     const card = cards[i];
@@ -305,7 +330,7 @@ function openCarouselItem(i){
 /* ---------- reel / video feed view ---------- */
 let observer = null;
 
-function openReel(i){
+function openReel(i) {
   const cat = CATEGORIES[i];
   reelLabel.textContent = cat.label;
   reelIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">${ICONS[cat.icon]}</svg>`;
@@ -325,7 +350,7 @@ function openReel(i){
         <button aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12l16-7-6 16-3-6-7-3Z" stroke-linejoin="round"/></svg><span>Share</span></button>
       </div>
       <div class="reel-info">
-        <span class="reel-badge">${cat.label} · Vol ${idx+1}</span>
+        <span class="reel-badge">${cat.label} · Vol ${idx + 1}</span>
         <h3>Seyon × ${cat.label}</h3>
         <p>${desc}</p>
       </div>
@@ -342,7 +367,7 @@ function openReel(i){
   markActiveBar(0);
 }
 
-function setupReelObserver(){
+function setupReelObserver() {
   if (observer) observer.disconnect();
   observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -359,7 +384,7 @@ function setupReelObserver(){
   });
 }
 
-function markActiveBar(activeIdx){
+function markActiveBar(activeIdx) {
   reelScroll.querySelectorAll(".reel-item").forEach(item => {
     const idx = Number(item.dataset.idx);
     item.querySelectorAll(".bar").forEach((bar, p) => {
@@ -371,17 +396,17 @@ function markActiveBar(activeIdx){
 }
 
 /* ---------- content created on add.html ---------- */
-function getSavedProjects(){
+function getSavedProjects() {
   return Array.isArray(window.PANDIAN_CATEGORIES) ? window.PANDIAN_CATEGORIES : [];
 }
 
-function escapeHtml(value){
+function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, character => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
   })[character]);
 }
 
-function renderSavedProjects(){
+function renderSavedProjects() {
   const grid = document.getElementById("projectsGrid");
   const empty = document.getElementById("projectsEmpty");
   if (!grid || !empty) return;
@@ -425,7 +450,7 @@ let resizeTimer;
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(render, 100);
-}, { passive:true });
+}, { passive: true });
 
 /* ---------- init ---------- */
 buildCards();

@@ -127,6 +127,8 @@ class CartController extends Controller
             'detail' => $request->user()->customerDetail,
             'upiUrl' => $upiUrl,
             'upiReference' => $upiReference,
+            'codAvailable' => (bool) config('services.payment.cod_available', false)
+                && $cartData['products']->every(fn (Product $product): bool => $product->cod_available),
         ]);
     }
 

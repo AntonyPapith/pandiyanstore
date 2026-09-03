@@ -87,6 +87,11 @@
     sendForm(form, isWishlist ? { wishlisted: desiredActive ? "1" : "0" } : {}, function (result) {
       if (isWishlist) {
         if (form.getAttribute("data-request-id") !== requestId) return;
+        if (window.PRODUCT_VARIANTS) {
+          for (var variantIndex = 0; variantIndex < window.PRODUCT_VARIANTS.length; variantIndex += 1) {
+            if (window.PRODUCT_VARIANTS[variantIndex].wishlist_url === form.action) window.PRODUCT_VARIANTS[variantIndex].wishlisted = Boolean(result.active);
+          }
+        }
         var forms = document.querySelectorAll(".wishlist-toggle");
         for (var i = 0; i < forms.length; i += 1) {
           if (forms[i].action === form.action) {

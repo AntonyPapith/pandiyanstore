@@ -31,6 +31,9 @@ class OrderService
             if ($products->count() !== count($cart)) {
                 throw ValidationException::withMessages(['cart' => 'One or more products are unavailable.']);
             }
+            if ($paymentMethod === 'cod' && (! config('services.payment.cod_available', false) || $products->contains(fn (Product $product): bool => ! $product->cod_available))) {
+                throw ValidationException::withMessages(['payment_method' => 'Cash on delivery is not available for this product. Please use GPay/UPI.']);
+            }
             $total = 0;
             foreach ($products as $product) {
                 if ($cart[$product->id] > $product->quantity) {

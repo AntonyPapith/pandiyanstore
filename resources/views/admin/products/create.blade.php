@@ -11,12 +11,13 @@
 <div class="product-row-add"><button class="primary-btn" id="addProductRow" type="button">+ Add row</button></div>
 <div class="form-actions"><button class="primary-btn" type="submit">Create products</button><a href="{{ route('admin.products.index') }}">Cancel</a></div></form>
 <template id="productRowTemplate"><fieldset class="product-entry"><div class="product-entry-head"><strong>Product <span class="product-row-number"></span></strong><button class="remove-product-row" type="button">Remove</button></div><div class="product-entry-grid">
-<label>Product image<input type="file" data-name="image" accept="image/jpeg,image/png,image/webp" required></label>
+<label>Product images<input type="file" data-name="images" accept="image/jpeg,image/png,image/webp" multiple required></label>
 <label>Quantity<input type="number" data-name="quantity" min="0"></label>
 <label>Color<input type="text" data-name="color" maxlength="80"></label>
 <label>Size<input type="text" data-name="size" maxlength="80"></label>
 <label>Price<input type="number" data-name="price" min="0" step="0.01"></label>
 <label>Discount price<input type="number" data-name="discount_price" min="0" step="0.01"></label>
+<label class="product-cod-field"><span>Cash on delivery</span><span class="admin-check"><input type="hidden" data-name="cod_available" value="0"><input type="checkbox" data-name="cod_available" value="1"> Available</span></label>
 <label class="product-description-field">Description<textarea data-name="description" maxlength="2000"></textarea></label>
 </div></fieldset></template>
 <script src="{{ asset('js/product-rows.js') }}?v={{ filemtime(public_path('js/product-rows.js')) }}"></script>

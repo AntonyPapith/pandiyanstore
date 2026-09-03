@@ -28,7 +28,7 @@ class CustomerAuthController extends Controller
     public function authenticate(Request $request): RedirectResponse
     {
         $credentials = $request->validate(['email' => ['required', 'email'], 'password' => ['required', 'string']]);
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (! Auth::attempt($credentials, true)) {
             return back()->withErrors(['email' => 'The email ID or password is incorrect.'])->onlyInput('email');
         }
         $request->session()->regenerate();
