@@ -30,7 +30,7 @@ class ProductController extends Controller
             'filters' => $filters,
         ]);
     }
-
+ 
     public function create(): View
     {
         return view('admin.products.create', ['categories' => Category::orderBy('name')->get()]);

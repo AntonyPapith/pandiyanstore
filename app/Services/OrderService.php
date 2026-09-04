@@ -32,7 +32,7 @@ class OrderService
                 throw ValidationException::withMessages(['cart' => 'One or more products are unavailable.']);
             }
             if ($paymentMethod === 'cod' && (! config('services.payment.cod_available', false) || $products->contains(fn (Product $product): bool => ! $product->cod_available))) {
-                throw ValidationException::withMessages(['payment_method' => 'Cash on delivery is not available for this product. Please use GPay/UPI.']);
+                throw ValidationException::withMessages(['payment_method' => 'Cash on delivery is not available for this product. Please use online payment.']);
             }
             $total = 0;
             foreach ($products as $product) {
@@ -46,11 +46,11 @@ class OrderService
                 'user_id' => $user->id,
                 'order_number' => 'PS'.now()->format('YmdHis').str_pad((string) random_int(0, 999), 3, '0', STR_PAD_LEFT),
                 'payment_method' => $paymentMethod,
-                'payment_status' => $paymentMethod === 'cod' ? 'cash_on_delivery' : 'pending_verification',
+                'payment_status' => $paymentMethod === 'cod' ? 'cash_on_delivery' : 'captured',
                 'upi_reference' => $payment['upi_reference'] ?? null,
                 'razorpay_order_id' => $payment['razorpay_order_id'] ?? null,
                 'razorpay_payment_id' => $payment['razorpay_payment_id'] ?? null,
-                'order_status' => $paymentMethod === 'cod' ? 'placed' : 'payment_pending',
+                'order_status' => 'placed',
                 'total_amount' => $total,
                 'customer_name' => $user->name,
                 'customer_email' => $user->email,

@@ -12,7 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/checkout.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/gpay.css') }}">
 </head>
 
 <body class="checkout-page">
@@ -33,20 +32,21 @@
         </section>
 
         @if($errors->any())<p class="checkout-error">{{ $errors->first() }}</p>@endif
-        @if(!$upiUrl)<p class="checkout-error">Online payment is temporarily unavailable. Cash on delivery is still available.</p>@endif
+        @if(!$razorpayAvailable)<p class="checkout-error">Online payment is temporarily unavailable. Please try again later.</p>@endif
 
-        <form class="payment-form" id="paymentForm" method="POST" action="{{ route('orders.store') }}">@csrf<input type="hidden" name="upi_reference" value="{{ $upiReference }}">
+        <form class="payment-form" id="paymentForm" method="POST" action="{{ route('orders.store') }}">@csrf
             <fieldset>
                 <legend>Payment method</legend>
                 <label class="payment-option {{ !$codAvailable ? 'is-disabled' : '' }}" @if(!$codAvailable) aria-disabled="true" @endif><input type="radio" name="payment_method" value="cod" @checked($codAvailable) @disabled(!$codAvailable)><span class="payment-radio"></span><span class="payment-icon">₹</span><span class="payment-copy"><strong>Cash on delivery</strong><small>{{ $codAvailable ? 'Pay when your order arrives' : 'Cash on delivery not available in this product' }}</small></span></label>
-                <label class="payment-option"><input type="radio" name="payment_method" value="upi" @checked(!$codAvailable)><span class="payment-radio"></span><span class="payment-icon gpay"><b>G</b></span><span class="payment-copy"><strong>Google Pay</strong><small>Pay securely using the GPay app</small></span></label>
+                <label class="payment-option {{ !$razorpayAvailable ? 'is-disabled' : '' }}" @if(!$razorpayAvailable) aria-disabled="true" @endif><input type="radio" name="payment_method" value="razorpay" data-upi-app="gpay" @checked(!$codAvailable && $razorpayAvailable) @disabled(!$razorpayAvailable)><span class="payment-radio"></span><span class="payment-icon gpay"><b>G</b></span><span class="payment-copy"><strong>Google Pay</strong><small>Pay securely with UPI through Razorpay</small></span></label>
             </fieldset>
             <p class="checkout-error" id="paymentError" hidden></p>
-            <button class="checkout-primary" id="paymentButton" type="submit">{{ $codAvailable ? 'Confirm order' : 'Open GPay / UPI' }} <span>&rarr;</span></button>
+            <button class="checkout-primary" id="paymentButton" type="submit" @disabled(!$codAvailable && !$razorpayAvailable)>{{ $codAvailable ? 'Confirm order' : 'Pay now' }} <span>&rarr;</span></button>
         </form>
         <a class="checkout-back" href="{{ route('checkout', ['edit' => 1]) }}">&larr; Edit delivery address</a>
     </main>
-    <script>window.PANDIAN_UPI = {{ Illuminate\Support\Js::from(['url' => $upiUrl]) }};</script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>window.PANDIAN_RAZORPAY = {{ Illuminate\Support\Js::from(['create_url' => route('razorpay.order'), 'verify_url' => route('razorpay.verify')]) }};</script>
     <script src="{{ asset('js/payment.js') }}?v={{ filemtime(public_path('js/payment.js')) }}"></script>
 </body>
 

@@ -11,6 +11,10 @@ class RazorpayController extends Controller
 {
     public function create(Request $request, OrderService $orders): JsonResponse
     {
+        if (! filled(config('services.razorpay.key_id')) || ! filled(config('services.razorpay.key_secret'))) {
+            return response()->json(['message' => 'Online payment is temporarily unavailable.'], 503);
+        }
+
         $cart = $request->session()->get('cart', []);
         abort_if($cart === [], 422, 'Your cart is empty.');
         abort_unless($request->user()->customerDetail, 422, 'Please add a delivery address.');
@@ -31,7 +35,7 @@ class RazorpayController extends Controller
         $razorpayOrderId = $response->json('id');
         $contact = preg_replace('/\D+/', '', (string) $request->user()->phone);
         $contact = strlen($contact) === 10 ? '+91'.$contact : '+'.ltrim($contact, '+');
-        $request->session()->put('razorpay_checkout', ['order_id' => $razorpayOrderId, 'amount' => $amount]);
+        $request->session()->put('razorpay_checkout', ['order_id' => $razorpayOrderId, 'amount' => $amount, 'cart' => $cart]);
 
         return response()->json([
             'key' => config('services.razorpay.key_id'),
@@ -39,6 +43,7 @@ class RazorpayController extends Controller
             'amount' => $amount,
             'currency' => 'INR',
             'name' => 'Pandiyan Store',
+            'description' => 'Order payment',
             'customer' => ['name' => $request->user()->name, 'email' => $request->user()->email, 'contact' => $contact],
         ]);
     }
@@ -59,6 +64,8 @@ class RazorpayController extends Controller
             ->acceptJson()->get('https://api.razorpay.com/v1/payments/'.$data['razorpay_payment_id']);
         abort_unless($payment->successful(), 422, 'Unable to verify the payment. Please contact support before paying again.');
         abort_unless((int) $payment->json('amount') === (int) $expected['amount'], 422, 'Payment amount verification failed.');
+        abort_unless($payment->json('currency') === 'INR', 422, 'Payment currency verification failed.');
+        abort_unless(hash_equals($expected['order_id'], (string) $payment->json('order_id')), 422, 'Payment order verification failed.');
 
         if ($payment->json('status') === 'authorized') {
             $payment = Http::withBasicAuth(config('services.razorpay.key_id'), config('services.razorpay.key_secret'))
@@ -70,7 +77,7 @@ class RazorpayController extends Controller
 
         abort_unless($payment->successful() && $payment->json('status') === 'captured', 422, 'Payment could not be captured. Please contact support before paying again.');
 
-        $order = $orders->place($request->user(), $request->session()->get('cart', []), 'upi', $data);
+        $order = $orders->place($request->user(), $expected['cart'], 'razorpay', $data);
         $request->session()->forget(['cart', 'razorpay_checkout']);
         $request->session()->flash('order_success', 'Payment successful! Your order has been placed.');
         $request->session()->flash('placed_order_id', $order->id);

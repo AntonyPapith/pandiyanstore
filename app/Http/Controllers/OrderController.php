@@ -15,18 +15,13 @@ class OrderController extends Controller
     public function store(Request $request, OrderService $orders): RedirectResponse
     {
         $data = $request->validate([
-            'payment_method' => ['required', Rule::in(['cod', 'upi'])],
-            'upi_reference' => ['nullable', 'required_if:payment_method,upi', 'string', 'max:100'],
+            'payment_method' => ['required', Rule::in(['cod'])],
         ]);
         $cart = $request->session()->get('cart', []);
-        $order = $orders->place($request->user(), $cart, $data['payment_method'], [
-            'upi_reference' => $data['payment_method'] === 'upi' ? $data['upi_reference'] : null,
-        ]);
+        $order = $orders->place($request->user(), $cart, $data['payment_method']);
 
         $request->session()->forget('cart');
-        $request->session()->flash('order_success', $data['payment_method'] === 'upi'
-            ? 'Your order was submitted and the UPI payment is pending verification.'
-            : 'Your order has been placed successfully.');
+        $request->session()->flash('order_success', 'Your order has been placed successfully.');
         $request->session()->flash('placed_order_id', $order->id);
 
         return redirect()->route('customer.account')->withFragment('orders');

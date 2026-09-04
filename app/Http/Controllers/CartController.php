@@ -37,7 +37,7 @@ class CartController extends Controller
         if ($request->expectsJson()) {
             return response()->json([
                 'message' => $product->quantity > 0 ? 'Product added to cart.' : 'This product is out of stock.',
-                'cart_count' => count(array_filter($request->session()->get('cart', []), fn ($quantity) => $quantity > 0)),
+                'cart_count' => count(array_filter($request->session()->get('cart', []), fn($quantity) => $quantity > 0)),
             ], $product->quantity > 0 ? 200 : 422);
         }
 
@@ -58,7 +58,7 @@ class CartController extends Controller
                 'quantity' => $cart[$product->id],
                 'line_amount' => $product->cartPrice() * $cart[$product->id],
                 'total' => $data['total'],
-                'cart_count' => count(array_filter($cart, fn ($cartQuantity) => $cartQuantity > 0)),
+                'cart_count' => count(array_filter($cart, fn($cartQuantity) => $cartQuantity > 0)),
             ]);
         }
 
@@ -87,8 +87,8 @@ class CartController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$request->user()->id],
-            'phone' => ['required', 'string', 'max:20', 'unique:users,phone,'.$request->user()->id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $request->user()->id],
+            'phone' => ['required', 'string', 'max:20', 'unique:users,phone,' . $request->user()->id],
             'city' => ['required', 'string', 'max:100'],
             'area' => ['required', 'string', 'max:150'],
             'nearby_landmark' => ['nullable', 'string', 'max:150'],
@@ -111,24 +111,12 @@ class CartController extends Controller
             return redirect()->route('cart.index')->withErrors(['cart' => 'Your cart is empty.']);
         }
 
-        $upiId = (string) config('services.upi.id');
-        $upiReference = 'PS'.now()->format('YmdHis').$request->user()->id;
-        $upiUrl = $upiId === '' ? null : 'upi://pay?'.http_build_query([
-            'pa' => $upiId,
-            'pn' => config('services.upi.payee_name', 'Pandiyan Store'),
-            'am' => number_format((float) $cartData['total'], 2, '.', ''),
-            'cu' => 'INR',
-            'tr' => $upiReference,
-            'tn' => 'Pandiyan Store order '.$upiReference,
-        ], '', '&', PHP_QUERY_RFC3986);
-
         return view('cart.payment', [
             ...$cartData,
             'detail' => $request->user()->customerDetail,
-            'upiUrl' => $upiUrl,
-            'upiReference' => $upiReference,
+            'razorpayAvailable' => filled(config('services.razorpay.key_id')) && filled(config('services.razorpay.key_secret')),
             'codAvailable' => (bool) config('services.payment.cod_available', false)
-                && $cartData['products']->every(fn (Product $product): bool => $product->cod_available),
+                && $cartData['products']->every(fn(Product $product): bool => $product->cod_available),
         ]);
     }
 

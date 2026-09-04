@@ -28,7 +28,10 @@ class WhatsAppService
             ], $order);
         }
 
-        $adminPhone = config('services.whatsapp.admin_phone') ?: User::where('is_admin', true)->whereNotNull('phone')->value('phone');
+        $adminPhone = User::where('is_admin', true)
+    ->whereNotNull('phone')
+    ->where('phone', '!=', '')
+    ->value('phone');
         if (config('services.whatsapp.admin_template') && $adminPhone) {
             $this->sendTemplate($adminPhone, config('services.whatsapp.admin_template'), [
                 $order->order_number, $order->customer_name, $this->normalizePhone($order->customer_phone),
