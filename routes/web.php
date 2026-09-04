@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController;
@@ -32,6 +33,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [CustomerAuthController::class, 'authenticate'])->name('login.store');
     Route::get('/register', [CustomerAuthController::class, 'register'])->name('customer.register');
     Route::post('/register', [CustomerAuthController::class, 'store'])->name('customer.store');
+    Route::get('/forgot-password', [CustomerAuthController::class, 'forgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [CustomerAuthController::class, 'sendPasswordOtp'])->name('password.otp.send');
+    Route::get('/forgot-password/otp', [CustomerAuthController::class, 'otpForm'])->name('password.otp');
+    Route::post('/forgot-password/otp', [CustomerAuthController::class, 'verifyPasswordOtp'])->name('password.otp.verify');
+    Route::get('/reset-password', [CustomerAuthController::class, 'resetPasswordForm'])->name('password.reset');
+    Route::post('/reset-password', [CustomerAuthController::class, 'resetPassword'])->name('password.reset.save');
 });
 Route::post('/logout', [CustomerAuthController::class, 'logout'])->middleware('auth')->name('customer.logout');
 Route::get('/account', [CustomerAuthController::class, 'account'])->middleware('auth')->name('customer.account');
@@ -60,4 +67,5 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::resource('customers', CustomerController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
 });

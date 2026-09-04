@@ -63,18 +63,6 @@
         order_id: checkout.order_id,
         prefill: checkout.customer,
         theme: { color: "#CD0000" },
-        config: {
-          display: {
-            blocks: {
-              upi_only: {
-                name: "Pay via UPI",
-                instruments: [{ method: "upi" }],
-              },
-            },
-            sequence: ["block.upi_only"],
-            preferences: { show_default_blocks: false },
-          },
-        },
         modal: {
           ondismiss: () => {
             setBusy(false);
@@ -95,7 +83,7 @@
 
       razorpay.on("payment.failed", response => {
         setBusy(false);
-        showError(response.error?.description || "Payment failed. Your order was not placed.");
+        showError(response.error?.description || "Payment was not completed. Your order was not placed and no amount was charged by the website.");
       });
       razorpay.open();
     } catch (error) {
